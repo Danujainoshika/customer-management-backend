@@ -11,6 +11,8 @@ import com.example.customer_management.repository.CityRepository;
 import com.example.customer_management.repository.CountryRepository;
 import com.example.customer_management.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -46,6 +48,15 @@ public class CustomerService {
                 .orElseThrow(()->new ResourceNotFoundException("Customer not found"));
 
         return buildResponse(customer);
+    }
+
+    public Page<CustomerResponseDTO> getCustomers(int page, int size){
+        if(page < 0) page = 0;
+        if(size > 50) size = 50;
+
+        Page<Customer> customerPage = customerRepository.findAll(PageRequest.of(page, size));
+
+        return customerPage.map(customer -> buildResponse(customer));
     }
 
     private void validateCustomer(CustomerRequestDTO dto) {

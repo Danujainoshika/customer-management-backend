@@ -5,6 +5,7 @@ import com.example.customer_management.dto.CustomerResponseDTO;
 import com.example.customer_management.model.Customer;
 import com.example.customer_management.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,5 +29,13 @@ public class CustomerController {
         CustomerResponseDTO response = customerService.getCustomerById(id);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public Page<CustomerResponseDTO> getCustomers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        if(page < 0 ) page = 0;
+        if(size > 50) size = 10;
+
+        return customerService.getCustomers(page, size);
     }
 }
