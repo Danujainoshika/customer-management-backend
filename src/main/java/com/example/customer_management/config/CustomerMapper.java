@@ -18,6 +18,7 @@ public class CustomerMapper {
 
     public CustomerResponseDTO toDTO(Customer c) {
         CustomerResponseDTO dto = new CustomerResponseDTO();
+        dto.setId( c.getId() );
         dto.setName(c.getName());
         dto.setNic(c.getNic());
         return dto;

@@ -4,6 +4,8 @@ import com.example.customer_management.config.CustomerMapper;
 import com.example.customer_management.dto.AddressDTO;
 import com.example.customer_management.dto.CustomerRequestDTO;
 import com.example.customer_management.dto.CustomerResponseDTO;
+import com.example.customer_management.exceptionhandler.DuplicateResourceException;
+import com.example.customer_management.exceptionhandler.ResourceNotFoundException;
 import com.example.customer_management.model.*;
 import com.example.customer_management.repository.CityRepository;
 import com.example.customer_management.repository.CountryRepository;
@@ -39,9 +41,16 @@ public class CustomerService {
         return buildResponse(savedCustomer);
     }
 
+    public CustomerResponseDTO getCustomerById(Long id){
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Customer not found"));
+
+        return buildResponse(customer);
+    }
+
     private void validateCustomer(CustomerRequestDTO dto) {
         if (customerRepository.existsByNic(dto.getNic())) {
-            throw new RuntimeException("Customer already exists");
+            throw new DuplicateResourceException("Customer already exists");
         }
     }
 
@@ -76,11 +85,11 @@ public class CustomerService {
 
                     Country country = countryRepository
                             .findByNameIgnoreCase(a.getCountry())
-                            .orElseThrow(() -> new RuntimeException("Country not found"));
+                            .orElseThrow(()->new ResourceNotFoundException("Country not found"));
 
                     City city = cityRepository
                             .findByNameIgnoreCaseAndCountry(a.getCity(), country)
-                            .orElseThrow(() -> new RuntimeException("City not found"));
+                            .orElseThrow(()->new ResourceNotFoundException("Country not found"));
 
                     address.setCountry(country);
                     address.setCity(city);

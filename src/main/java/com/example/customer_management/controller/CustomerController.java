@@ -2,14 +2,12 @@ package com.example.customer_management.controller;
 
 import com.example.customer_management.dto.CustomerRequestDTO;
 import com.example.customer_management.dto.CustomerResponseDTO;
+import com.example.customer_management.model.Customer;
 import com.example.customer_management.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -21,6 +19,13 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CustomerResponseDTO> saveCustomer(@RequestBody CustomerRequestDTO customerRequestDTO){
         CustomerResponseDTO response = customerService.createCustomer(customerRequestDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> getCustomer(@PathVariable long id){
+        CustomerResponseDTO response = customerService.getCustomerById(id);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
