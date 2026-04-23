@@ -1,0 +1,27 @@
+package com.example.customer_management.controller;
+
+import com.example.customer_management.dto.CustomerRequestDTO;
+import com.example.customer_management.dto.CustomerResponseDTO;
+import com.example.customer_management.service.CustomerService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/customers")
+@RequiredArgsConstructor
+public class CustomerController {
+
+    private  final CustomerService customerService;
+
+    @PostMapping
+    public ResponseEntity<CustomerResponseDTO> saveCustomer(@RequestBody CustomerRequestDTO customerRequestDTO){
+        CustomerResponseDTO response = customerService.createCustomer(customerRequestDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+}
