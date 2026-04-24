@@ -36,13 +36,13 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "customer_family",
-            joinColumns = @JoinColumn(name = "customer_id"),
-            inverseJoinColumns = @JoinColumn(name = "family_member_id")
-    )
-    private Set<Customer> familyMembers = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "parent_customer_id")
+    private Customer parentCustomer;
+
+    @OneToMany(mappedBy = "parentCustomer", cascade = CascadeType.ALL)
+    private List<Customer> familyMembers = new ArrayList<>();
+
 
 
     public void addMobile(CustomerMobile mobile) {
@@ -53,6 +53,11 @@ public class Customer {
     public void addAddress(Address address) {
         addresses.add(address);
         address.setCustomer(this);
+    }
+
+    public void addFamilyMember(Customer child) {
+        familyMembers.add(child);
+        child.setParentCustomer(this);
     }
 
 

@@ -59,6 +59,61 @@ public class CustomerService {
         return customerPage.map(customer -> buildResponse(customer));
     }
 
+    public CustomerResponseDTO updateCustomer(Long id, CustomerRequestDTO dto) {
+
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Customer not found"));
+
+        if(dto.getNic() != null){
+            if(!customer.getNic().equals(dto.getNic())){
+                if(customerRepository.existsByNic(dto.getNic())){
+                    throw new DuplicateResourceException("Customer NIC already exists");
+                }
+                customer.setNic(dto.getNic());
+            }
+        }
+
+
+        if(dto.getMobileNumbers() != null){
+            customer.getMobiles().clear();
+            dto.getMobileNumbers().forEach(num -> {
+                CustomerMobile mobile = new CustomerMobile();
+                mobile.setMobileNumber(num);
+                mobile.setCustomer(customer);
+                customer.getMobiles().add(mobile);  // add to same list
+            });
+        }
+
+        if (dto.getAddresses() != null) {
+
+            customer.getAddresses().clear();
+
+            dto.getAddresses().forEach(a -> {
+
+                Address address = new Address();
+                address.setLine1(a.getLine1());
+                address.setLine2(a.getLine2());
+
+                Country country = countryRepository
+                        .findByNameIgnoreCase(a.getCountry())
+                        .orElseThrow(() -> new ResourceNotFoundException("Country not found"));
+
+                City city = cityRepository
+                        .findByNameIgnoreCaseAndCountry(a.getCity(), country)
+                        .orElseThrow(() -> new ResourceNotFoundException("City not found"));
+
+                address.setCountry(country);
+                address.setCity(city);
+                address.setCustomer(customer);
+
+                customer.getAddresses().add(address);
+            });
+        }
+
+        Customer updated = customerRepository.save(customer);
+        return buildResponse(updated);
+    }
+
     private void validateCustomer(CustomerRequestDTO dto) {
         if (customerRepository.existsByNic(dto.getNic())) {
             throw new DuplicateResourceException("Customer already exists");

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/customers")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class CustomerController {
 
     private  final CustomerService customerService;
@@ -37,5 +38,11 @@ public class CustomerController {
         if(size > 50) size = 10;
 
         return customerService.getCustomers(page, size);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> updateCustomer(@RequestBody CustomerRequestDTO customerRequestDTO, @PathVariable long id){
+        CustomerResponseDTO response = customerService.updateCustomer(id, customerRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
