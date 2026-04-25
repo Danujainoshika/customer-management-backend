@@ -1,3 +1,5 @@
+package com.example.customer_management;
+
 import com.example.customer_management.config.CustomerMapper;
 import com.example.customer_management.dto.AddressDTO;
 import com.example.customer_management.dto.CustomerRequestDTO;
