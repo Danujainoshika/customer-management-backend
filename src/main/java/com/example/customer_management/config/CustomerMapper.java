@@ -22,6 +22,7 @@ public class CustomerMapper {
         dto.setName(c.getName());
         dto.setNic(c.getNic());
         dto.setDob(c.getDob());
+
         return dto;
     }
 }
